@@ -1,3 +1,5 @@
+#!/usr/local/bin/env python3.5
+
 from discord.ext import commands
 import os
 
