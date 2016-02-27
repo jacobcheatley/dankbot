@@ -23,29 +23,28 @@ class Reminder:
             m = self.quote_regex.search(ctx.message.content)
             time = ctx.message.content[10:m.start()]
             text = m.group()
-            dt_obj, ret = self.cal.parseDT(time, tzinfo=timezone('Pacific/Auckland'))
+            dt_obj, ret = self.cal.parseDT(time)
             reminders = self.db.get('reminders', [])
-            dt_text = ''.join(str(dt_obj).rsplit(':', 1))
             reminders.append(
                 {
-                    'time': dt_text,
+                    'time': str(dt_obj),
                     'id': ctx.message.author.id,
                     'text': text
                 }
             )
             await self.db.put('reminders', reminders)
-            await self.bot.say('Reminding {} about {} at {}.'.format(ctx.message.author.mention, text, dt_text))
+            await self.bot.say('Reminding {} about {} - {}.'.format(ctx.message.author.mention, text, time))
         except:
             await self.bot.say('Invalid format. Use !remindme {time} "{message}". Try !remindme 1 minute "TOP KEK!"')
 
     async def update_reminders(self):
         try:
             while not self.bot.is_closed:
-                current_time = datetime.now(timezone('Pacific/Auckland'))
+                current_time = datetime.now()
                 reminders = self.db.get('reminders', [])
                 to_remove = []
                 for reminder in reminders:
-                    t = datetime.strptime(reminder['time'], '%Y-%m-%d %I:%M:%S%z')
+                    t = datetime.strptime(reminder['time'], '%Y-%m-%d %I:%M:%S')
                     if t <= current_time:
                         to_remove.append(reminder)
                         await self.send_reminder(reminder)
