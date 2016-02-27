@@ -1,5 +1,3 @@
-#!/usr/local/bin/env python3.5
-
 from discord.ext import commands
 import os
 
@@ -10,6 +8,7 @@ initial_extensions = [
     'cogs.conversation',
     'cogs.fun',
     'cogs.info',
+    'cogs.reminder',
     'cogs.queries'
 ]
 
@@ -27,4 +26,5 @@ async def on_ready():
 
 
 if __name__ == '__main__':
-    bot.run(os.environ['DISCORD_BOT_USER'], os.environ['DISCORD_BOT_PASS'])
+    # bot.run(os.environ['DISCORD_BOT_USER'], os.environ['DISCORD_BOT_PASS'])
+    bot.run('j.acobcheatley@gmail.com', 'wowsuchbot')
