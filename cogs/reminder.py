@@ -44,7 +44,7 @@ class Reminder:
                 reminders = self.db.get('reminders', [])
                 to_remove = []
                 for reminder in reminders:
-                    t = datetime.strptime(reminder['time'], '%Y-%m-%d %I:%M:%S')
+                    t = datetime.strptime(reminder['time'], '%Y-%m-%d %H:%M:%S')
                     if t <= current_time:
                         to_remove.append(reminder)
                         await self.send_reminder(reminder)
