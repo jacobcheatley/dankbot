@@ -3,6 +3,10 @@
  - Tags (eg tag alias, creating tags, tag everythings)
  - Add event logging (manually)
  - Modify help message from default
- - Create poll
+ - Create poll command
  - Number of commands run
  - Add back admin commands - ignore, activate, deactive etc
+ - Fix remindme:
+    - Disable spacing at end of time
+    - Complain about invalid times
+    - Use NZT for the purpose of dates and tomorrow and such
