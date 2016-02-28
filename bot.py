@@ -27,5 +27,4 @@ async def on_ready():
 
 
 if __name__ == '__main__':
-    # bot.run(os.environ['DISCORD_BOT_USER'], os.environ['DISCORD_BOT_PASS'])
-    bot.run('j.acobcheatley@gmail.com', 'wowsuchbot')
+    bot.run(os.environ['DISCORD_BOT_USER'], os.environ['DISCORD_BOT_PASS'])
