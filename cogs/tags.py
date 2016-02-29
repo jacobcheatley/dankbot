@@ -34,6 +34,12 @@ class Tags:
             await self.bot.say('Tag "{}" not found.'.format(name))
             return
 
+        await self.db.put(lookup,
+                          {
+                              'owner': tag['owner'],
+                              'content': tag['content'],
+                              'uses': tag['uses'] + 1
+                          })
         await self.bot.say(tag['content'])
 
     @tag.error
@@ -57,7 +63,12 @@ class Tags:
             await self.bot.say('A tag with the name of "{}" already exists.'.format(name))
             return
 
-        await self.db.put(lookup, {'owner': ctx.message.author.id, 'content': content})
+        await self.db.put(lookup,
+                          {
+                              'owner': ctx.message.author.id,
+                              'content': content,
+                              'uses': 0
+                          })
         await self.bot.say('Tag "{}" successfully created.'.format(lookup))
 
     @tag.command(pass_context=True)
@@ -75,7 +86,12 @@ class Tags:
             await self.bot.say('Only the tag or bot owner can edit this tag.')
             return
 
-        await self.db.put(lookup, {'owner': ctx.message.author.id, 'content': content})
+        await self.db.put(lookup,
+                          {
+                              'owner': tag['owner'],
+                              'content': content,
+                              'uses': tag['uses']
+                          })
         await self.bot.say('Tag successfully edited.')
 
     @tag.command(pass_context=True, aliases=['delete'])
@@ -103,9 +119,60 @@ class Tags:
         tags = [tag_name for tag_name, tag_info in self.db.all().items() if tag_info['owner'] == owner]
 
         if tags:
-            await self.bot.say('You have the following tags:\n{}'.format(', '.join(tags)))
+            await self.bot.say('You have the following tags:\n{}'.format(', '.join(sorted(tags))))
         else:
             await self.bot.say('You have no tags.')
+
+    @tag.command()
+    async def stats(self):
+        """Gives stats about the tag database."""
+
+        fmt = '**Total tags: {}**\n**Total uses: {}**\n**Most popular tags:**\n{}'
+        everything = self.db.all().items()
+        total_uses = sum(tag_info['uses'] for tag_name, tag_info in everything)
+        popular = sorted(everything, key=lambda tag: tag[1]['uses'], reverse=True)
+        popular_format = ['{} - {} uses.'.format(tag_name, tag_info['uses']) for tag_name, tag_info in popular[:5]]
+
+        await self.bot.say(fmt.format(len(self.db), total_uses, '\n'.join(popular_format)))
+
+    @tag.command(pass_context=True)
+    async def info(self, ctx, *, name: str):
+        """Retrives information about a tag (owner and times used)."""
+
+        lookup = name.lower().strip()
+        tag = self.get_tag(lookup)
+        owner_name = discord.utils.find(lambda m: m.id == tag['owner'], self.bot.get_all_members())
+
+        if tag is None:
+            await self.bot.say('Tag not found.')
+            return
+
+        await self.bot.say('**Tag "{}":**\nOwner: {}\nUses: {}'.format(lookup, owner_name, tag['uses']))
+
+    @info.error
+    async def info_error(self, error, ctx):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await self.bot.say('Missing tag name to get info for.')
+
+    @tag.command()
+    async def search(self, query: str):
+        """Searches for a tag. Query must be at least 2 characters."""
+
+        print('searching')
+        query = query.lower().strip()
+        if len(query) < 2:
+            await self.bot.say('Query length must be at least two characters.')
+            return
+
+        results = {tag_name for tag_name in self.db.all() if query in tag_name}
+
+        if results:
+            await self.bot.say('{} tags found:\n{}'.format(len(results), ', '.join(results)))
+
+    @search.error
+    async def search_error(self, error, ctx):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await self.bot.say('Missing query to search for.')
 
 
 def setup(bot):
