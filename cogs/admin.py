@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from .utils import checks, functions
+from .utils import checks, functions, database
 import urllib.request
 from urllib.request import urlopen
 from urllib.parse import urlparse
@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 class Admin:
     def __init__(self, bot):
         self.bot = bot
+        self.db = database.Database('admin.json')
 
     @commands.command(pass_context=True)
     @checks.is_owner()
@@ -47,6 +48,34 @@ class Admin:
             await self.bot.say(eval(str_to_eval))
         except Exception as e:
             await self.bot.whisper(e)
+
+    @commands.command()
+    @checks.is_owner()
+    async def ignore(self, *, member: discord.Member):
+        """Globally ignores a member."""
+        ignores = self.db.get('ignores', [])
+
+        if member.id in ignores:
+            await self.bot.say('That user is already ignored.')
+            return
+
+        ignores.append(member.id)
+        await self.db.put('ignores', ignores)
+        await self.bot.say('{0.name} has been ignored by DankBot.'.format(member))
+
+    @commands.command()
+    @checks.is_owner()
+    async def unignore(self, *, member: discord.Member):
+        """Unignores the member."""
+        ignores = self.db.get('ignores', [])
+
+        try:
+            ignores.remove(member.id)
+        except ValueError:
+            pass
+        else:
+            await self.db.put('ignores', ignores)
+            await self.bot.say('{0.name} has been unignored by DankBot.'.format(member))
 
 
 def setup(bot):

@@ -7,7 +7,7 @@ def is_owner_check(message):
 
 
 def is_owner():
-    return commands.check(lambda ctx: ctx.message.author.id == is_owner_check(ctx.message))
+    return commands.check(lambda ctx: is_owner_check(ctx.message))
 
 
 def in_channel(*channels: str):

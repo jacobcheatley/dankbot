@@ -13,6 +13,8 @@ def verify_lookup(lookup):
 
 
 class Tags:
+    """The tag system is very dank. Because of how stuff works, !help tag might be more useful."""
+
     def __init__(self, bot):
         self.bot = bot
         self.db = database.Database('tags.json')
@@ -158,7 +160,6 @@ class Tags:
     async def search(self, query: str):
         """Searches for a tag. Query must be at least 2 characters."""
 
-        print('searching')
         query = query.lower().strip()
         if len(query) < 2:
             await self.bot.say('Query length must be at least two characters.')

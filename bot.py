@@ -1,5 +1,6 @@
 from discord.ext import commands
 import os
+from cogs.utils import checks
 
 bot = commands.Bot(command_prefix='!', description='This bot is Dank.')
 
@@ -8,7 +9,7 @@ initial_extensions = [
     'cogs.conversation',
     'cogs.fun',
     'cogs.info',
-    'cogs.reminder',
+    # 'cogs.reminder',
     'cogs.tags',
     'cogs.queries'
 ]
@@ -17,6 +18,7 @@ initial_extensions = [
 @bot.event
 async def on_ready():
     print('Logged in as {}.'.format(bot.user.name))
+    bot.commands_executed = 0
 
     for extension in initial_extensions:
         try:
@@ -24,6 +26,22 @@ async def on_ready():
             print('Loaded {}'.format(extension))
         except Exception as e:
             print('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
+
+
+@bot.event
+async def on_command(command, ctx):
+    bot.commands_executed += 1
+
+
+@bot.event
+async def on_message(message):
+    admin = bot.get_cog('Admin')
+
+    if admin is not None and not checks.is_owner_check(message):
+        if message.author.id in admin.db.get('ignores', []):
+            return
+
+    await bot.process_commands(message)
 
 
 if __name__ == '__main__':

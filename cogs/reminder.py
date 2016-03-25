@@ -14,7 +14,7 @@ class Reminder:
         self.db = database.Database('reminders.json')
         self.cal = pdt.Calendar(constants=pdt.Constants(localeID='en_AU'))
         self.quote_regex = re.compile(r'"(.*)"')
-        self.updater = bot.loop.create_task(self.update_reminders())
+        self.updater = self.bot.loop.create_task(self.update_reminders())
 
     @commands.command(pass_context=True, description='Use !remindme {time} "{message}". Your message must be quoted.')
     async def remindme(self, ctx):

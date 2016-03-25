@@ -1,9 +1,8 @@
 #TODO
  - First counter (first of each day)
  - Add event logging (manually)
- - Modify help message from default
+ - Modify help message from default?
  - Create poll command
- - Number of commands run
  - Add back admin commands - ignore, activate, deactive etc
  - Fix remindme:
     - Disable spacing at end of time
