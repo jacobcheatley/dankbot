@@ -3,7 +3,6 @@ from discord.ext import commands
 from .utils import database
 import parsedatetime as pdt
 import re
-from pytz import timezone
 import asyncio
 from datetime import datetime
 

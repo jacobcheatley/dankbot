@@ -1,6 +1,10 @@
 import discord
 from discord.ext import commands
 import time
+from .utils import functions, database, checks
+import datetime
+
+fmt = '%Y-%m-%d %H:%M:%S'
 
 
 def member_info(member: discord.Member):
@@ -15,6 +19,7 @@ class Info:
 
     def __init__(self, bot):
         self.bot = bot
+        self.db = database.Database('info.json')
         self.start_time = time.time()
 
     @commands.command()
@@ -31,17 +36,50 @@ class Info:
     async def uptime(self):
         """Displays bot uptime."""
         seconds = int(time.time() - self.start_time)
-        days = seconds // 86400
-        seconds -= days * 86400
-        hours = seconds // 3600
-        seconds -= hours * 3600
-        minutes = seconds // 60
-        seconds -= minutes * 60
-        time_display = '{0}{1}{2}{3}'.format('' if days == 0 else str(days) + ' days, ',
-                                             '' if hours == 0 else str(hours) + ' hours, ',
-                                             '' if minutes == 0 else str(minutes) + ' minutes, ',
-                                             str(seconds) + ' seconds.')
-        await self.bot.say('Bot has been up for ' + time_display)
+        await self.bot.say('Bot has been up for ' + functions.seconds_format(seconds) + '.')
+
+    @commands.command(aliases=['add_event'])
+    @checks.is_owner()
+    async def event(self, name: str, *, content: str):
+        """Adds an event to the summary info."""
+        summaries = self.db.get('summaries', [])
+        missed = self.db.get('missed', dict())
+
+        summaries.append({
+            'name': name,
+            'content': content,
+            'time': datetime.datetime.now().strftime(fmt)
+        })
+        await self.db.put('summaries', summaries)
+        for k in missed:
+            missed[k] += 1
+
+        await self.bot.say('Added a new event to summaries: "{0}"'.format(name))
+
+    @commands.command(aliases=['what_happened', '?'], pass_context=True)
+    async def summary(self, ctx: commands.Context):
+        """Gives a summary of the most recent few events you haven't caught up on."""
+
+        missed = self.db.get('missed', dict())
+        id = ctx.message.author.id
+        events = 5
+        if id in missed:
+            events = min(5, missed[id])
+        if events != 0:
+            missed[id] = 0
+            await self.db.put('missed', missed)
+
+            summaries = self.db.get('summaries', [])
+            current_time = datetime.datetime.now()
+            stuff_to_say = '{0.mention}, since you last used summary:\n'.format(ctx.message.author)
+            for summary in summaries[-events:]:
+                time = datetime.datetime.strptime(summary['time'], fmt)
+                time_delta = int((current_time - time).total_seconds())
+                time_format = functions.seconds_format(time_delta)
+                stuff_to_say += '{0} ago: **"{1}"** - *{2}*\n'.format(time_format, summary['name'], summary['content'])
+            await self.bot.say(stuff_to_say)
+        else:
+            await self.bot.say('You are up to date.')
 
 
 def setup(bot):
