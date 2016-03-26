@@ -9,6 +9,8 @@ from datetime import datetime
 
 
 class Reminder:
+    """Remind me to update this description."""
+
     def __init__(self, bot):
         self.bot = bot
         self.db = database.Database('reminders.json')

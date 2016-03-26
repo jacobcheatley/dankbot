@@ -11,6 +11,8 @@ def member_info(member: discord.Member):
 
 
 class Info:
+    """This category of things gives information, FYI."""
+
     def __init__(self, bot):
         self.bot = bot
         self.start_time = time.time()

@@ -18,7 +18,6 @@ initial_extensions = [
 @bot.event
 async def on_ready():
     print('Logged in as {}.'.format(bot.user.name))
-    bot.commands_executed = 0
 
     for extension in initial_extensions:
         try:
@@ -26,11 +25,6 @@ async def on_ready():
             print('Loaded {}'.format(extension))
         except Exception as e:
             print('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
-
-
-@bot.event
-async def on_command(command, ctx):
-    bot.commands_executed += 1
 
 
 @bot.event

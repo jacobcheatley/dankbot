@@ -15,6 +15,8 @@ class ConversationInfo:
 
 
 class Conversation:
+    """Because sometimes DankBot gets lonely."""
+
     def __init__(self, bot):
         self.bot = bot
         self.conversations = {}

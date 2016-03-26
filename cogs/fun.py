@@ -5,6 +5,8 @@ import random
 
 
 class Fun:
+    """Commands that serve no real purpose."""
+
     def __init__(self, bot):
         self.bot = bot
 

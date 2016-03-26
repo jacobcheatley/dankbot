@@ -8,6 +8,8 @@ wolfram_client = wolframalpha.Client(os.environ['WOLFRAM_ID'])
 
 
 class Queries:
+    """Internet searching things!"""
+
     def __init__(self, bot):
         self.bot = bot
 

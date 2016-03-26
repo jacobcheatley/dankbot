@@ -7,9 +7,11 @@ from urllib.parse import urlparse
 
 
 class Admin:
+    """No one is going to see this description."""
+
     def __init__(self, bot):
         self.bot = bot
-        self.db = database.Database('admin.json')
+        self.db = database.Database('admin.json', loop=bot.loop)
 
     @commands.command(pass_context=True)
     @checks.is_owner()
