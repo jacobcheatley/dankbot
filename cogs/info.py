@@ -7,13 +7,6 @@ import datetime
 fmt = '%Y-%m-%d %H:%M:%S'
 
 
-def member_info(member: discord.Member):
-    return 'Info about {0.name} ({0.status}):\n' \
-           '{0.avatar_url}\n' \
-           'ID: {0.id}\n' \
-           'Joined at: {0.joined_at}\n'.format(member)
-
-
 class Info:
     """This category of things gives information, FYI."""
 
@@ -22,15 +15,42 @@ class Info:
         self.db = database.Database('info.json')
         self.start_time = time.time()
 
+    def member_info(self, member: discord.Member):
+        member_id = member.id
+        extra_info = self.db.get('extra_info', {})
+        name = 'Not assigned.'
+        desc = 'Not assigned.'
+        if member_id in extra_info:
+            name = extra_info[member_id]['name']
+            desc = extra_info[member_id]['desc']
+        return 'Info about {0.name} ({0.status}):\n' \
+               '{0.avatar_url}\n' \
+               'ID: {0.id}\n' \
+               'Name: {1}\n' \
+               'Description: {2}\n' \
+               'Joined at: {0.joined_at}\n'.format(member, name, desc)
+
     @commands.command()
     async def whois(self, member: discord.Member):
         """Displays information about yourself."""
-        await self.bot.say(member_info(member))
+        await self.bot.say(self.member_info(member))
 
     @commands.command(pass_context=True)
     async def whoami(self, ctx: commands.Context):
         """Displays information about a mentioned user."""
-        await self.bot.say(member_info(ctx.message.author))
+        await self.bot.say(self.member_info(ctx.message.author))
+
+    @commands.command()
+    @checks.is_owner()
+    async def describe(self, member: discord.Member, name: str, description: str):
+        """Updates the name and description of a user."""
+        extra_info = self.db.get('extra_info', {})
+        extra_info[member.id] = {
+            'name': name,
+            'desc': description
+        }
+        await self.db.put('extra_info', extra_info)
+        await self.bot.say('Updated member info.')
 
     @commands.command()
     async def uptime(self):
