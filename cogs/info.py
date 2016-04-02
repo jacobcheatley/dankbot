@@ -32,12 +32,12 @@ class Info:
 
     @commands.command()
     async def whois(self, member: discord.Member):
-        """Displays information about yourself."""
+        """Displays information about a mentioned user."""
         await self.bot.say(self.member_info(member))
 
     @commands.command(pass_context=True)
     async def whoami(self, ctx: commands.Context):
-        """Displays information about a mentioned user."""
+        """Displays information about yourself."""
         await self.bot.say(self.member_info(ctx.message.author))
 
     @commands.command()
