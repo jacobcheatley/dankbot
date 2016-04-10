@@ -39,4 +39,4 @@ async def on_message(message):
 
 
 if __name__ == '__main__':
-    bot.run(os.environ['DISCORD_BOT_USER'], os.environ['DISCORD_BOT_PASS'])
+    bot.run(os.environ['DISCORD_TOKEN'])
