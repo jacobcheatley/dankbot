@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from .utils import database, checks
+from .utils import database, checks, functions
 
 
 def verify_lookup(lookup):
@@ -121,7 +121,7 @@ class Tags:
         tags = [tag_name for tag_name, tag_info in self.db.all().items() if tag_info['owner'] == owner]
 
         if tags:
-            await self.bot.say('You have the following tags:\n{}'.format(', '.join(sorted(tags))))
+            await functions.send_long(self.bot, ctx.message.channel, 'You have the following tags:\n{}'.format(', '.join(sorted(tags))))
         else:
             await self.bot.say('You have no tags.')
 
@@ -133,7 +133,7 @@ class Tags:
         everything = self.db.all().items()
         total_uses = sum(tag_info['uses'] for tag_name, tag_info in everything)
         popular = sorted(everything, key=lambda tag: tag[1]['uses'], reverse=True)
-        popular_format = ['{} - {} uses.'.format(tag_name, tag_info['uses']) for tag_name, tag_info in popular[:5]]
+        popular_format = ['{} - {} uses.'.format(tag_name, tag_info['uses']) for tag_name, tag_info in popular[:10]]
 
         await self.bot.say(fmt.format(len(self.db), total_uses, '\n'.join(popular_format)))
 
@@ -156,8 +156,8 @@ class Tags:
         if isinstance(error, commands.MissingRequiredArgument):
             await self.bot.say('Missing tag name to get info for.')
 
-    @tag.command()
-    async def search(self, query: str):
+    @tag.command(pass_context=True)
+    async def search(self, ctx, query: str):
         """Searches for a tag. Query must be at least 2 characters."""
 
         query = query.lower().strip()
@@ -168,7 +168,7 @@ class Tags:
         results = {tag_name for tag_name in self.db.all() if query in tag_name}
 
         if results:
-            await self.bot.say('{} tags found:\n{}'.format(len(results), ', '.join(results)))
+            await functions.send_long(self.bot, ctx.message.channel, '{} tags found:\n{}'.format(len(results), ', '.join(results)))
 
     @search.error
     async def search_error(self, error, ctx):
