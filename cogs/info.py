@@ -40,6 +40,16 @@ class Info:
         """Displays information about yourself."""
         await self.bot.say(self.member_info(ctx.message.author))
 
+    @commands.command(hidden=True)
+    async def whoareyou(self):
+        """I am whatever you say I am."""
+        await self.bot.say('`I AM OWESOME MECHANICAL ROBOT`\n'
+                           ':robot: :robot: :robot: :robot: :robot:\n'
+                           '`CREATED BY JACOB CHEATLEY IN THE YEAR 2045`\n'
+                           ':robot: :robot: :robot: :robot: :robot:\n'
+                           '`FEAR MY WRATH`\n'
+                           'http://i.imgur.com/wznK9QJ.png')
+
     @commands.command()
     @checks.is_owner()
     async def describe(self, member: discord.Member, name: str, description: str):
