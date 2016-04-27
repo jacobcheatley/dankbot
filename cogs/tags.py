@@ -168,7 +168,7 @@ class Tags:
         results = {tag_name for tag_name in self.db.all() if query in tag_name}
 
         if results:
-            await functions.send_long(self.bot, ctx.message.channel, '{} tags found:\n{}'.format(len(results), ', '.join(results)))
+            await functions.send_long(self.bot, ctx.message.channel, '{} tags found:\n{}'.format(len(results), ', '.join(sorted(results))))
 
     @search.error
     async def search_error(self, error, ctx):
