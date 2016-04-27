@@ -9,7 +9,7 @@ initial_extensions = [
     'cogs.conversation',
     'cogs.fun',
     'cogs.info',
-    # 'cogs.reminder',
+    'cogs.replies',
     'cogs.tags',
     'cogs.queries'
 ]
