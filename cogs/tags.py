@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from .utils import database, checks, functions
+import random
 
 
 def verify_lookup(lookup):
@@ -156,22 +157,44 @@ class Tags:
         if isinstance(error, commands.MissingRequiredArgument):
             await self.bot.say('Missing tag name to get info for.')
 
+    async def _tags_search(self, query: str):
+        query = query.lower().strip()
+        if len(query) < 2:
+            await self.bot.say('Query length must be at least two characters.')
+            return False
+        return [tag_name for tag_name in self.db.all() if query in tag_name]
+
     @tag.command(pass_context=True)
     async def search(self, ctx, query: str):
         """Searches for a tag. Query must be at least 2 characters."""
 
-        query = query.lower().strip()
-        if len(query) < 2:
-            await self.bot.say('Query length must be at least two characters.')
-            return
-
-        results = {tag_name for tag_name in self.db.all() if query in tag_name}
+        results = await self._tags_search(query)
 
         if results:
             await functions.send_long(self.bot, ctx.message.channel, '{} tags found:\n{}'.format(len(results), ', '.join(sorted(results))))
+        else:
+            await self.bot.say('No tags found.')
 
     @search.error
     async def search_error(self, error, ctx):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await self.bot.say('Missing query to search for.')
+
+    @tag.command(name='random')
+    async def _random(self, query: str):
+        """Gives a random tag from search results. Query must be at least 2 characters."""
+
+        results = await self._tags_search(query)
+
+        if results:
+            rand_name = random.choice(results)
+            rand_content = self.get_tag(rand_name)['content']
+            await self.bot.say('Randomly selected "{}":\n{}'.format(rand_name, rand_content))
+        else:
+            await self.bot.say('No tags found.')
+
+    @_random.error
+    async def random_error(self, error, ctx):
         if isinstance(error, commands.MissingRequiredArgument):
             await self.bot.say('Missing query to search for.')
 
