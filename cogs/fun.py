@@ -92,7 +92,7 @@ class Fun:
         """Plays a game of rock-paper-scissors-lizard-Spock with DankBot."""
         player_gesture = None
         for gesture, symbols in gesture_map.items():
-            if play in symbols:
+            if play.lower() in symbols:
                 player_gesture = gesture
                 break
 
