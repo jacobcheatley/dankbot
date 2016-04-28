@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
+from . import config
 
 
 def is_owner_check(message):
-    return message.author.id == '132448107148476417'
+    return message.author.id == config.owner_id
 
 
 def is_owner():
@@ -15,6 +16,5 @@ def in_channel(*channels: str):
 
 
 def in_spam_channel():
-    return in_channel('spam_allowed', 'spam')
+    return in_channel(*config.spam_channels)
 
-# TODO: Config files
