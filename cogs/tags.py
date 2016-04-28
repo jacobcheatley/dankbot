@@ -122,7 +122,8 @@ class Tags:
         tags = [tag_name for tag_name, tag_info in self.db.all().items() if tag_info['owner'] == owner]
 
         if tags:
-            await functions.send_long(self.bot, ctx.message.channel, 'You have the following tags:\n{}'.format(', '.join(sorted(tags))))
+            await functions.send_long(self.bot, ctx.message.channel,
+                                      'You have the following tags:\n{}'.format(', '.join(sorted(tags))))
         else:
             await self.bot.say('You have no tags.')
 
@@ -171,7 +172,8 @@ class Tags:
         results = await self._tags_search(query)
 
         if results:
-            await functions.send_long(self.bot, ctx.message.channel, '{} tags found:\n{}'.format(len(results), ', '.join(sorted(results))))
+            await functions.send_long(self.bot, ctx.message.channel,
+                                      '{} tags found:\n{}'.format(len(results), ', '.join(sorted(results))))
         else:
             await self.bot.say('No tags found.')
 
@@ -188,7 +190,14 @@ class Tags:
 
         if results:
             rand_name = random.choice(results)
-            rand_content = self.get_tag(rand_name)['content']
+            rand_tag = self.get_tag(rand_name)
+            rand_content = rand_tag['content']
+            await self.db.put(rand_name,
+                              {
+                                  'owner': rand_tag['owner'],
+                                  'content': rand_content,
+                                  'uses': rand_tag['uses'] + 1
+                              })
             await self.bot.say('Randomly selected "{}":\n{}'.format(rand_name, rand_content))
         else:
             await self.bot.say('No tags found.')
