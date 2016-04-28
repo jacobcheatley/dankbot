@@ -1,28 +1,18 @@
 from discord.ext import commands
 import os
-from cogs.utils import checks
+from cogs.utils import checks, config
+import datetime
 
-bot = commands.Bot(command_prefix='!', description='This bot is Dank.')
-
-initial_extensions = [
-    'cogs.admin',
-    'cogs.conversation',
-    'cogs.fun',
-    'cogs.info',
-    'cogs.replies',
-    'cogs.tags',
-    'cogs.queries'
-]
+bot = commands.Bot(**config.bot_kwargs)
 
 
 @bot.event
 async def on_ready():
-    print('Logged in as {}.'.format(bot.user.name))
+    print('Logged in as {} @ {}.'.format(bot.user.name, datetime.datetime.now()))
 
-    for extension in initial_extensions:
+    for extension in config.initial_extensions:
         try:
             bot.load_extension(extension)
-            print('Loaded {}'.format(extension))
         except Exception as e:
             print('Failed to load extension {}\n{}: {}'.format(extension, type(e).__name__, e))
 
@@ -53,7 +43,7 @@ async def load(*, module: str):
 
 @bot.command(hidden=True)
 @checks.is_owner()
-async def unload(*, module : str):
+async def unload(*, module: str):
     """Unloads a module."""
     module = module.strip()
     try:
