@@ -10,7 +10,7 @@ initial_extensions = [
     'cogs.queries'
 ]
 bot_kwargs = {
-    'command_prefix': ('!', 'dankbot pls ', '<@132499229154213889> '),
+    'command_prefix': ('!', 'dankbot pls ', '<@132499229154213889> ', '<@132499229154213889>', 'DankBot, please '),
     'description': 'This bot is Dank.',
     'pm_help': False
 }
