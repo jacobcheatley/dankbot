@@ -4,6 +4,7 @@ import re
 import random
 from .rps import Gesture, gesture_map
 from .utils import database
+from threading import Lock
 
 rps_description = 'ROCK: {}\nPAPER: {}\nSCISSORS: {}\nLIZARD: {}\nSPOCK: {}\n'.format(
     ', '.join(gesture_map[Gesture.rock]),
@@ -27,6 +28,8 @@ default_record = {
     'win_streak': 0,
     'loss_streak': 0
 }
+
+locks = {}
 
 
 class Fun:
@@ -98,38 +101,34 @@ class Fun:
             return
 
         player_id = ctx.message.author.id
-        record = self.rps_db.get(player_id, default_record)
+
+        if player_id not in locks:
+            locks[player_id] = Lock()
 
         dankbot_gesture = Gesture(random.randrange(1, 6))
 
         result = player_gesture.result_versus_bot(dankbot_gesture)
         await self.bot.say(result.message)
 
-        updated_streak = 0
-        if result.win:
-            updated_streak = max(1, record['current_streak'] + 1)
-        elif result.win is False:
-            updated_streak = min(-1, record['current_streak'] - 1)
-
         draw = result.win is None
         win = result.win
         loss = not win and not draw
 
-        await self.rps_db.put(player_id, {
-            'win': record['win'] + 1 if win else record['win'],
-            'loss': record['loss'] + 1 if loss else record['loss'],
-            'draw': record['draw'] if draw else record['draw'],
-            'current_streak': updated_streak,
-            'win_streak': max(updated_streak, record['win_streak']),
-            'loss_streak': max(-updated_streak, record['loss_streak'])
-        })
-
-        total = self.rps_db.get('total', default_total)
-        await self.rps_db.put('total', {
-            'win': total['win'] + 1 if win else total['win'],
-            'loss': total['loss'] + 1 if loss else total['loss'],
-            'draw': total['draw'] + 1 if draw else total['draw']
-        })
+        with locks[player_id]:
+            record = self.rps_db.get(player_id, default_record)
+            updated_streak = 0
+            if result.win:
+                updated_streak = max(1, record['current_streak'] + 1)
+            elif result.win is False:
+                updated_streak = min(-1, record['current_streak'] - 1)
+            await self.rps_db.put(player_id, {
+                'win': record['win'] + 1 if win else record['win'],
+                'loss': record['loss'] + 1 if loss else record['loss'],
+                'draw': record['draw'] + 1 if draw else record['draw'],
+                'current_streak': updated_streak,
+                'win_streak': max(updated_streak, record['win_streak']),
+                'loss_streak': max(-updated_streak, record['loss_streak'])
+            })
 
     @rps.command(pass_context=True)
     async def record(self, ctx):
@@ -151,10 +150,9 @@ class Fun:
     @rps.command(pass_context=True)
     async def stats(self):
         """Gives stats about peoples battles against DankBot."""
-        everything = self.rps_db.all()
-        total = everything.pop('total', default_total)
-        everything = everything.items()
+        everything = self.rps_db.all().items()
 
+        # TODO: Rework and simplify these submethods
         def wl(record: tuple):
             return record[1]['win'] / max(record[1]['loss'], 1)
 
@@ -179,10 +177,13 @@ class Fun:
             else:
                 return ', '.join(func_reformat_record(record, func) for record in records)
 
+        def sum_key(key: str):
+            return sum(record[1][key] for record in everything)
+
         lines = ['**Overall:**',
-                 '*Wins:* {}'.format(total['win']),
-                 '*Losses:* {}'.format(total['loss']),
-                 '*Draws:* {}'.format(total['draw']),
+                 '*Wins:* {}'.format(sum_key('win')),
+                 '*Losses:* {}'.format(sum_key('loss')),
+                 '*Draws:* {}'.format(sum_key('draw')),
                  '**High Scores:**',
                  '*Most Wins:* {}'.format(reformat_all(asc_sort('win'), 'win')),
                  '*Most Losses:* {}'.format(reformat_all(asc_sort('loss'), 'loss')),
