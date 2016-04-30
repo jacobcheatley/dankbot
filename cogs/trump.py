@@ -55,6 +55,8 @@ tfh_messages = [
 
 
 class Trump:
+    """You can't stump the Trump."""
+
     def __init__(self, bot):
         self.bot = bot
         self.db = database.Database('trump.json')

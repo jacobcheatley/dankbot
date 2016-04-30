@@ -3,6 +3,7 @@ spam_channels = ['spam_allowed', 'spam', 'twitch_chat']
 initial_extensions = [
     'cogs.admin',
     'cogs.conversation',
+    'cogs.forwarding',
     'cogs.fun',
     'cogs.info',
     'cogs.repl',
