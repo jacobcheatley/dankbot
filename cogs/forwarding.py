@@ -44,12 +44,12 @@ class Forwarding:
         await functions.send_long(self.bot, self.owner, '\n\n'.join(self.format_pm(log) for log in logs))
         await self.bot.send_message(self.owner, '---END REVIEW---')
 
-    @pm.command()
+    @pm.command(aliases=['s'])
     async def send(self, user: discord.User, *, content):
         """Sends a message to a user as DankBot."""
         await self.bot.send_message(user, content)
 
-    @pm.command()
+    @pm.command(aliases=['r'])
     async def reply(self, *, content):
         """Sends a reply back to the person who last sent a message."""
         if self.last_sender is None:
