@@ -40,7 +40,9 @@ class Forwarding:
         async for log in self.bot.logs_from(channel, n):
             logs.append(log)
         logs = reversed(logs)
+        await self.bot.send_message(self.owner, '---START REVIEW---')
         await functions.send_long(self.bot, self.owner, '\n\n'.join(self.format_pm(log) for log in logs))
+        await self.bot.send_message(self.owner, '---END REVIEW---')
 
     @pm.command()
     async def send(self, user: discord.User, *, content):
