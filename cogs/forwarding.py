@@ -53,7 +53,7 @@ class Forwarding:
         if self.last_sender is None:
             await self.bot.say('No one to reply to to.')
             return
-        self.bot.send_message(self.last_sender, content)
+        await self.bot.send_message(self.last_sender, content)
 
     async def on_message(self, message: discord.Message):
         if self.owner is None:
