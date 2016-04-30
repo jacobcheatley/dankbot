@@ -8,6 +8,7 @@ initial_extensions = [
     'cogs.repl',
     'cogs.replies',
     'cogs.tags',
+    'cogs.trump',
     'cogs.queries'
 ]
 bot_kwargs = {
