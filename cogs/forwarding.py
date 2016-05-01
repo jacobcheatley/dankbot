@@ -2,8 +2,9 @@ import discord
 from discord.ext import commands
 from .utils import checks, config, functions
 
+
 class Forwarding:
-    """An easy way to """
+    """An easy way to forward PMs to the bot to the owner and vice versa"""
 
     def __init__(self, bot):
         self.bot = bot
@@ -12,9 +13,9 @@ class Forwarding:
 
     def format_pm(self, message: discord.Message):
         if message.author.id == self.bot.user.id:
-            return '**I sent** \'{0.content}\'\nTo user {0.channel.user} @ {0.timestamp}.'.format(message)
+            return '**I sent** \'{0.content}\'\nTo user **{0.channel.user}** @ {0.timestamp}.'.format(message)
         else:
-            return '**I received** \'{0.content}\'\nFrom user {0.channel.user} @ {0.timestamp}.'.format(message)
+            return '**I received** \'{0.content}\'\nFrom user **{0.channel.user}** @ {0.timestamp}.'.format(message)
 
     async def transfer_pm_info(self, message: discord.Message):
         await functions.send_long(self.bot, self.owner, self.format_pm(message))
