@@ -1,8 +1,20 @@
 #TODO
- - Fix remindme:
+- Fix remindme:
     - Disable spacing at end of time
     - Complain about invalid times
     - Use NZT for the purpose of dates and tomorrow and such
- - Make Group Bot redundant
+- Make Group Bot redundant
     - Integrate with whois
     - Better group editing and stuff
+- Reddit API stuff
+    - get post:
+        - reddit top <subreddit_name> [time_period=all (all/year/month/week/day/hour)]
+        - similar for hot, new, rising, controversial
+    - get info on user:
+        - karma breakdown etc
+    - and more things
+- Images
+    - Color display
+    - Image search by keyword
+    - Generate comics
+    - Large emoji
