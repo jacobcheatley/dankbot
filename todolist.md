@@ -18,3 +18,5 @@
     - Image search by keyword
     - Generate comics
     - Large emoji
+- User Personalisation
+    - Set color (create role for that person)
