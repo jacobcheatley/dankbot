@@ -5,8 +5,8 @@ import re
 class Replies:
     def __init__(self, bot):
         self.bot = bot
-        self.r_regex = r'/r/([^\s/]+)'
-        self.u_regex = r'/u/([^\s/]+)'
+        self.r_regex = re.compile(r'(?:^|\s)/r/(\S+)')
+        self.u_regex = re.compile(r'(?:^|\s)/u/(\S+)')
 
     async def on_message(self, message: discord.Message):
         if message.content.startswith(self.bot.command_prefix) or message.author.id == self.bot.user.id:
@@ -14,13 +14,15 @@ class Replies:
 
         reply_lines = []
 
-        r_matches = re.findall(self.r_regex, message.content)
+        r_matches = self.r_regex.findall(message.content)
         if r_matches:
+            print(r_matches)
             subs = ['https://www.reddit.com/r/{}'.format(sub) for sub in r_matches]
             reply_lines.extend(subs)
 
-        u_matches = re.findall(self.u_regex, message.content)
-        if r_matches:
+        u_matches = self.u_regex.findall(message.content)
+        if u_matches:
+            print(u_matches)
             users = ['https://www.reddit.com/u/{}'.format(user) for user in u_matches]
             reply_lines.extend(users)
 
