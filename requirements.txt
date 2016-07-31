@@ -1,2 +1,6 @@
-git+https://github.com/Rapptz/discord.py@async
-wolframalpha==2.2
+aiohttp==0.21.6
+chardet==2.3.0
+discord.py==0.10.0
+six==1.10.0
+websockets==3.1
+wolframalpha==2.4
