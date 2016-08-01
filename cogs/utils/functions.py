@@ -35,3 +35,19 @@ def seconds_format(seconds: int):
     m_str = '' if minutes == 0 else str(minutes) + ' minute{}, '.format('' if minutes == 1 else 's')
     s_str = str(seconds) + ' second{}'.format('' if seconds == 1 else 's')
     return '{0}{1}{2}{3}{4}'.format(w_str, d_str, h_str, m_str, s_str)
+
+
+def id_to_mention(member_id: str):
+    return '<@{}>'.format(member_id)
+
+
+def strip_white(string: str):
+    return ''.join(string.split())
+
+
+def id_to_member(member_id: str, bot: discord.Client):
+    return discord.utils.find(lambda m: m.id == member_id, bot.get_all_members())
+
+
+def id_to_name(member_id: str, bot: discord.Client):
+    return id_to_member(member_id, bot).name
