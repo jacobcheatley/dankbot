@@ -32,7 +32,7 @@ class Groups:
         return True
 
     async def _notify(self, channel: discord.Channel, group_name: str):
-        lookup = functions.strip_white(group_name)
+        lookup = functions.strip_white(group_name).lower()
         group = self.get_group(lookup)
         if group is None:
             await self.bot.send_message(channel, 'Group {} not found'.format(lookup))
@@ -50,7 +50,7 @@ class Groups:
     async def create(self, ctx: commands.Context, group_name: str, *members: discord.Member):
         """Creates a new group controlled by you."""
 
-        lookup = functions.strip_white(group_name)
+        lookup = functions.strip_white(group_name).lower()
         if self.get_group(lookup) is not None:
             await self.bot.say('Group {} already exists.'.format(lookup))
             return
@@ -69,7 +69,7 @@ class Groups:
     async def remove(self, ctx: commands.Context, *, group_name: str):
         """Removes a group that you control."""
 
-        lookup = functions.strip_white(group_name)
+        lookup = functions.strip_white(group_name).lower()
         can_modify = await self.modify_test(lookup, self.get_group(lookup), ctx)
 
         if can_modify:
@@ -96,7 +96,7 @@ class Groups:
     async def add_member(self, ctx: commands.Context, member: discord.Member, group_name: str):
         """Adds a member to a group that you control."""
 
-        lookup = functions.strip_white(group_name)
+        lookup = functions.strip_white(group_name).lower()
         group = self.get_group(lookup)
         can_modify = await self.modify_test(lookup, group, ctx)
 
@@ -112,7 +112,7 @@ class Groups:
     async def remove_member(self, ctx: commands.Context, member: discord.Member, group_name: str):
         """Removes a member from a group that you control."""
 
-        lookup = functions.strip_white(group_name)
+        lookup = functions.strip_white(group_name).lower()
         group = self.get_group(lookup)
         can_modify = await self.modify_test(lookup, group, ctx)
 
@@ -133,7 +133,7 @@ class Groups:
     async def info(self, group_name: str):
         """Displays information about a group."""
 
-        lookup = functions.strip_white(group_name)
+        lookup = functions.strip_white(group_name).lower()
         group = self.get_group(lookup)
         if group is None:
             await self.bot.say('Group {} not found'.format(lookup))
@@ -149,7 +149,7 @@ class Groups:
     async def search(self, ctx, query: str):
         """Searches for a group. Query length must be at least 2 characters."""
 
-        query = functions.strip_white(query)
+        query = functions.strip_white(query).lower()
         if len(query) < 2:
             await self.bot.say('Query length must be at least two characters.')
             return
