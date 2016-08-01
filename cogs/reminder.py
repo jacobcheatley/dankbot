@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from .utils import database
+from .utils import database, functions
 import parsedatetime as pdt
 import re
 import asyncio
@@ -59,7 +59,7 @@ class Reminder:
             pass
 
     async def send_reminder(self, reminder):
-        member = discord.utils.find(lambda m: m.id == reminder['id'], self.bot.get_all_members())
+        member = functions.id_to_member(reminder['id'], self.bot)
         await self.bot.send_message(member, 'Reminding you about {}'.format(reminder['text']))
 
 
