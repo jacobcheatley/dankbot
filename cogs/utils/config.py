@@ -5,6 +5,7 @@ initial_extensions = [
     'cogs.conversation',
     'cogs.forwarding',
     'cogs.fun',
+    'cogs.groups',
     'cogs.info',
     'cogs.repl',
     'cogs.replies',
