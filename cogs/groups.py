@@ -65,6 +65,10 @@ class Groups:
                           })
         await self.bot.say('Successfully created group.')
 
+    @create.error
+    async def create_error(self, error, ctx):
+        await self.bot.say('lmao bad argument. You probably got a name wrong. Try using mentions.')
+
     @group.command(pass_context=True, aliases=['delete'])
     async def remove(self, ctx: commands.Context, *, group_name: str):
         """Removes a group that you control."""
