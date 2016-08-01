@@ -42,7 +42,7 @@ class Groups:
 
     @group.command(pass_context=True)
     async def notify(self, ctx, *, group_name: str):
-        """Notifies the members of a group. Can also use !@group_name anywhere in a message."""
+        """Notifies the members of a group. Can also use @!group_name anywhere in a message."""
 
         await self._notify(ctx.message.channel, group_name)
 
