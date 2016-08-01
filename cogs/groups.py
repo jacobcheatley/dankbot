@@ -143,10 +143,11 @@ class Groups:
             await self.bot.say('Group {} not found'.format(lookup))
             return
 
+        member_names = sorted([functions.id_to_name(member_id, self.bot) for member_id in group['members']])
         await self.bot.say('Group {} is owned by {} and has the members: {}'.format(
             lookup,
             functions.id_to_name(group['owner'], self.bot),
-            ', '.join([functions.id_to_name(member_id, self.bot) for member_id in group['members']])
+            ', '.join(member_names)
         ))
 
     @group.command(pass_context=True)
@@ -158,7 +159,7 @@ class Groups:
             await self.bot.say('Query length must be at least two characters.')
             return
 
-        results = [group_name for group_name in self.db.all() if query in group_name]
+        results = sorted([group_name for group_name in self.db.all() if query in group_name])
         if results:
             await functions.send_long(self.bot, ctx.message.channel, '{} groups found:\n{}'.format(len(results), ', '.join(results)))
         else:
@@ -175,4 +176,3 @@ class Groups:
 
 def setup(bot):
     bot.add_cog(Groups(bot))
-
