@@ -16,13 +16,11 @@ class Replies:
 
         r_matches = self.r_regex.findall(message.content)
         if r_matches:
-            print(r_matches)
             subs = ['https://www.reddit.com/r/{}'.format(sub) for sub in r_matches]
             reply_lines.extend(subs)
 
         u_matches = self.u_regex.findall(message.content)
         if u_matches:
-            print(u_matches)
             users = ['https://www.reddit.com/u/{}'.format(user) for user in u_matches]
             reply_lines.extend(users)
 
