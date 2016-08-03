@@ -1,5 +1,6 @@
 owner_id = '132448107148476417'
 spam_channels = ['spam_allowed', 'spam', 'twitch_chat']
+quotes_channel_id = '210310407473070090'
 initial_extensions = [
     'cogs.admin',
     'cogs.conversation',
@@ -7,6 +8,7 @@ initial_extensions = [
     'cogs.fun',
     'cogs.groups',
     'cogs.info',
+    'cogs.quotes',
     'cogs.repl',
     'cogs.replies',
     'cogs.tags',
