@@ -4,7 +4,7 @@ from .utils import checks, config, functions
 
 
 class Forwarding:
-    """An easy way to forward PMs to the bot to the owner and vice versa"""
+    """A class for forwarding information to the bot owner"""
 
     def __init__(self, bot):
         self.bot = bot
@@ -18,7 +18,13 @@ class Forwarding:
             return '**I received** \'{0.content}\'\nFrom user **{0.channel.user}** @ {0.timestamp}.'.format(message)
 
     async def transfer_pm_info(self, message: discord.Message):
-        await functions.send_long(self.bot, self.owner, self.format_pm(message))
+        await self.send_to_owner(self.format_pm(message))
+
+    async def send_to_owner(self, content: str):
+        if self.owner is None:
+            self.owner = self.get_owner()
+
+        await functions.send_long(self.bot, self.owner, content)
 
     def get_owner(self):
         return discord.utils.find(lambda m: m.id == config.owner_id, self.bot.get_all_members())
@@ -59,14 +65,33 @@ class Forwarding:
         await self.bot.send_message(self.last_sender, content)
 
     async def on_message(self, message: discord.Message):
-        if self.owner is None:
-            self.owner = self.get_owner()
-
         if not message.channel.is_private or message.channel.user.id == self.owner.id:
             return
 
         self.last_sender = message.author
         await self.transfer_pm_info(message)
+
+    async def on_message_delete(self, message: discord.Message):
+        content = '**Message in *{0.server.name}#{0.channel.name}* by *{0.author.name}* deleted:**\n' \
+                  '\n' \
+                  '\'{0.content}\'\n' \
+                  '\n' \
+                  '*Message time: {0.timestamp}*'.format(message)
+        await self.send_to_owner(content)
+
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+        if before.content == after.content:
+            return
+
+        content = '**Message in *{0.server.name}#{0.channel.name}* by *{0.author.name}* edited:**\n' \
+                  '\n' \
+                  '*Previous:*\n' \
+                  '\'{0.content}\'\n' \
+                  '*New:*\n' \
+                  '\'{1.content}\'\n' \
+                  '\n' \
+                  '*Message time: {0.timestamp}*'.format(before, after)
+        await self.send_to_owner(content)
 
 
 def setup(bot):
